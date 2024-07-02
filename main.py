@@ -1,3 +1,5 @@
+import json
+
 class SingletonMeta(type):
     _instances = {}
 
@@ -22,31 +24,48 @@ class UserSettings(metaclass=SingletonMeta):
         self.settings.clear()
 
     def display_settings(self):
-        for key, value in self.settings.items():
-            print(f"{key}: {value}")
+        if len(self.settings.items()) > 0:
+            for key, value in self.settings.items():
+                print(f"{key}: {value}")
+        else:
+            print('No settings availbale.')
+
+    def save_settings(self, filename):
+        try:
+            with open(filename, 'w') as file:
+                json.dump(self.settings, file)
+            print(f"Settings saved to {filename}.")
+        except Exception as e:
+            print(f"Error saving settings: {e}")
+
+    def load_settings(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                self.settings = json.load(file)
+            print(f"Settings loaded from {filename}.")
+        except FileNotFoundError:
+            print(f"Settings file {filename} not found.")
+        except Exception as e:
+            print(f"Error loading settings: {e}")
 
 
 if __name__ == "__main__":
-    settings1 = UserSettings()
-    settings2 = UserSettings()
+    settings = UserSettings()
 
-    if id(settings1) == id(settings2):
-        print("Singleton works, both variables contain the same instance.")
-    else:
-        print("Singleton failed, variables contain different instances.")
+    settings.set_setting("theme", "dark")
+    settings.set_setting("language", "en")
+    settings.set_setting("visibility", "contacts only")
+    settings.set_setting("notifications", "enabled")
 
-    # Пример использования настроек пользователя
-    settings1.set_setting("theme", "dark")
-    settings1.set_setting("language", "en")
-    settings2.set_setting("notifications", "enabled")
+    print("Settings from settings:")
+    settings.display_settings()
 
-    print("Settings from settings1:")
-    settings1.display_settings()
+    # settings.save_settings("user_settings.json")
 
-    print("\nSettings from settings2 (should be the same as settings1):")
-    settings2.display_settings()
-
-    # Сброс всех настроек
-    settings1.reset_settings()
+    settings.reset_settings()
     print("\nSettings after reset:")
-    settings1.display_settings()
+    settings.display_settings()
+
+    settings.load_settings("user_settings.json")
+    print("\nSettings after loading from file:")
+    settings.display_settings()
