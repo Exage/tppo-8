@@ -52,6 +52,7 @@ class UserSettings(metaclass=SingletonMeta):
 if __name__ == "__main__":
     settings = UserSettings()
 
+    # Make some comments
     settings.set_setting("theme", "dark")
     settings.set_setting("language", "en")
     settings.set_setting("visibility", "contacts only")
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     print("Settings from settings:")
     settings.display_settings()
 
-    # settings.save_settings("user_settings.json")
+    settings.save_settings("user_settings.json")
 
     settings.reset_settings()
     print("\nSettings after reset:")
